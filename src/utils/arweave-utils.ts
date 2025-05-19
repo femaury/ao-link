@@ -79,7 +79,7 @@ export function parseAoMessage(edge: TransactionEdge): AoMessage {
   const action = tags["Action"]
   const blockTimestamp = node.block ? new Date(node.block.timestamp * 1000) : null
   const ingestedAt = new Date(node.ingested_at * 1000)
-  const to = node.recipient.trim()
+  const to = type === "Assignment" ? tags["Process"] : node.recipient.trim()
 
   if (type === "Message" && tags["Name"]) {
     userTags["Name"] = tags["Name"]

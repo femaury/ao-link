@@ -389,6 +389,66 @@ export async function getModules(
  * WARN This query fails if both count and cursor are set
 // $messageId: String!
  */
+const assignmentsQuery = (includeCount = false) => gql`
+  query (
+    $msgId: String!
+    $limit: Int!
+    $sortOrder: SortOrder!
+    $cursor: String
+  ) {
+    transactions(
+      sort: $sortOrder
+      first: $limit
+      after: $cursor
+
+      tags: [{ name: "Message", values: [$msgId] }, { name: "Type", values: ["Assignment"] }, ${AO_NETWORK_IDENTIFIER}]
+      ${AO_MIN_INGESTED_AT}
+    ) {
+      ${includeCount ? "count" : ""}
+      ...MessageFields
+    }
+  }
+
+  ${messageFields}
+`
+export async function getAssignments(
+  limit = 100,
+  cursor = "",
+  ascending: boolean,
+  //
+  msgId: string,
+  msgAction?: string,
+): Promise<[number | undefined, AoMessage[]]> {
+  try {
+    const result = await goldsky
+      .query<TransactionsResponse>(assignmentsQuery(!cursor), {
+        limit,
+        sortOrder: ascending ? "HEIGHT_ASC" : "INGESTED_AT_DESC",
+        cursor,
+        //
+        msgId,
+      })
+      .toPromise()
+    const { data } = result
+
+    if (!data) return [0, []]
+
+    const { count, edges } = data.transactions
+    const events = edges.map((e) => {
+      const msg = parseAoMessage(e)
+      return { ...msg, action: msgAction ?? msg.action }
+    })
+
+    return [count, events]
+  } catch (error) {
+    return [0, []]
+  }
+}
+
+/**
+ * WARN This query fails if both count and cursor are set
+// $messageId: String!
+ */
 const resultingMessagesQuery = (includeCount = false, useOldRefSymbol = false) => gql`
   query (
     $fromProcessId: String!

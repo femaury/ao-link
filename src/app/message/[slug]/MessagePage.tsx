@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react"
 
 import { Navigate, useParams, useSearchParams } from "react-router-dom"
 
+import { Assignments } from "./Assignments"
 import { ComputeResult } from "./ComputeResult"
 import { LinkedMessages } from "./LinkedMessages"
 import { MessageData } from "./MessageData"
@@ -73,6 +74,7 @@ export function MessagePage() {
 
   const [linkedMessages, setLinkedMessages] = useState<number>()
   const [resultingCount, setResultingCount] = useState<number>()
+  const [assignmentsCount, setAssignmentsCount] = useState<number>()
 
   const [graphMessages, setGraphMessages] = useState<AoMessage[] | null>(null)
   const [entities, setEntities] = useState<Record<string, AoMessage | undefined> | null>(null)
@@ -252,6 +254,7 @@ export function MessagePage() {
           <Tabs value={activeTab} onChange={handleChange} textColor="primary">
             <TabWithCount value="resulting" label="Resulting messages" chipValue={resultingCount} />
             <TabWithCount value="linked" label="Linked messages" chipValue={linkedMessages} />
+            <TabWithCount value="assignments" label="Assignments" chipValue={assignmentsCount} />
           </Tabs>
           <Box sx={{ marginX: -2 }}>
             {activeTab === "resulting" && (
@@ -267,6 +270,13 @@ export function MessagePage() {
                 pushedFor={pushedFor}
                 messageId={messageId}
                 onCountReady={setLinkedMessages}
+                onDataReady={handleDataReady}
+              />
+            )}
+            {activeTab === "assignments" && (
+              <Assignments
+                message={message}
+                onCountReady={setAssignmentsCount}
                 onDataReady={handleDataReady}
               />
             )}
