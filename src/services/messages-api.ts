@@ -484,6 +484,13 @@ export async function getResultingMessages(
 ): Promise<[number | undefined, AoMessage[]]> {
   console.log("📜 LOG > msgRefs:", msgRefs)
   try {
+    // Note: Goldsky will ignore the empty array Ref filter.
+    //       This can cause a query returning way too many irrelevant records
+    //       e.g. when the MessagePage failed to compute the result
+    if (msgRefs && msgRefs.length === 0) {
+      return [0, []]
+    }
+
     const result = await goldsky
       .query<TransactionsResponse>(resultingMessagesQuery(!cursor, useOldRefSymbol), {
         limit,
