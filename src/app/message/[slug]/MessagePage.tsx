@@ -55,6 +55,8 @@ export function MessagePage() {
 
     if (message.type === "Assignment" && message.userTags.Message) {
       getMessageById(message.userTags.Message).then(setAssignment)
+    } else {
+      setAssignment(undefined)
     }
   }, [message])
 
