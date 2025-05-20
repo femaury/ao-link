@@ -3,6 +3,7 @@ import Grid2 from "@mui/material/Unstable_Grid2/Grid2"
 import { useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 
+import { IncomingAssignmentsTable } from "./IncomingAssignments"
 import { IncomingMessagesTable } from "./IncomingMessagesTable"
 import { OutgoingMessagesTable } from "./OutgoingMessagesTable"
 import { ProcessInteraction } from "./ProcessInteraction"
@@ -59,6 +60,7 @@ export function ProcessPage(props: ProcessPageProps) {
 
   const [outgoingCount, setOutgoingCount] = useState<number>()
   const [incomingCount, setIncomingCount] = useState<number>()
+  const [incomingAssignmentsCount, setIncomingAssignmentsCount] = useState<number>()
   const [processesCount, setProcessesCount] = useState<number>()
   const [transfersCount, setTransfersCount] = useState<number>()
   const [balancesCount, setBalancesCount] = useState<number>()
@@ -179,6 +181,11 @@ export function ProcessPage(props: ProcessPageProps) {
         <Tabs value={activeTab} onChange={handleChange} textColor="primary">
           <TabWithCount value="outgoing" label="Outgoing messages" chipValue={outgoingCount} />
           <TabWithCount value="incoming" label="Incoming messages" chipValue={incomingCount} />
+          <TabWithCount
+            value="incoming-assignments"
+            label="Assignments"
+            chipValue={incomingAssignmentsCount}
+          />
           <TabWithCount value="spawned" label="Spawned processes" chipValue={processesCount} />
           <TabWithCount value="transfers" label="Token transfers" chipValue={transfersCount} />
           <TabWithCount value="balances" label="Token balances" chipValue={balancesCount} />
@@ -198,6 +205,11 @@ export function ProcessPage(props: ProcessPageProps) {
             entityId={entityId}
             open={activeTab === "incoming"}
             onCountReady={setIncomingCount}
+          />
+          <IncomingAssignmentsTable
+            entityId={entityId}
+            open={activeTab === "incoming-assignments"}
+            onCountReady={setIncomingAssignmentsCount}
           />
           <SpawnedProcesses
             entityId={entityId}
